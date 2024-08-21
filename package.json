@@ -1,5 +1,5 @@
 {
-  "name": "revel-webapp-deployment",
+  "name": "reveldigital-webapp-github-action",
   "version": "1.0.0",
   "description": "Deploy a webapp to Revel Digital",
   "main": "index.js",

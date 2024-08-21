@@ -1,4 +1,4 @@
-name: Revel Digital Webapp Deployment
+name: reveldigital-webapp-github-action
 description:  Deploy a webapp to Revel Digital's CMS
 inputs:
   api-key:
