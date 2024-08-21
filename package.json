@@ -1,0 +1,15 @@
+{
+  "name": "revel-webapp-deployment",
+  "version": "1.0.0",
+  "description": "Deploy a webapp to Revel Digital",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Avery Knight",
+  "license": "MIT",
+  "keywords": [
+    "GitHub",
+    "Actions"
+  ]
+}

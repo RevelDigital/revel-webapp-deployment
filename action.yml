@@ -1,0 +1,22 @@
+name: Create a project
+description: Creates a new GitHub Project in your repository
+inputs:
+  api-key:
+    description: 'Revel Digital API key'
+    required: true
+  tags:
+    description: 'Project description'
+    required: false
+  environment:
+    description: 'Sets project visibility to public or private'
+    required: true
+    default: |
+      Production
+      Development
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: layout
+  color: gray-dark
