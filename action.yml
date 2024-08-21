@@ -1,6 +1,15 @@
 name: reveldigital-webapp-github-action
 description:  Deploy a webapp to Revel Digital's CMS
 inputs:
+  webapp-name:
+    description: 'Name for the webapp'
+    required: true
+  group-id:
+    description: 'Group id'
+    required: false
+  version:
+    description: 'Version of the webapp'
+    required: false
   api-key:
     description: 'Revel Digital API key'
     required: true
