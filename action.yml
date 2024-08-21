@@ -1,22 +1,27 @@
-name: Create a project
-description: Creates a new GitHub Project in your repository
+name: Revel Digital Webapp Deployment
+description:  Deploy a webapp to Revel Digital's CMS
 inputs:
   api-key:
     description: 'Revel Digital API key'
     required: true
   tags:
-    description: 'Project description'
+    description: 'Extra tags for smart scheduling'
     required: false
+  distribution-location:
+    description: 'Distribution folder with assets to wrap into a webapp'
+    required: true
+    default: dist
   environment:
-    description: 'Sets project visibility to public or private'
+    description: 'Set the deployment environment. Default is Production.'
     required: true
     default: |
       Production
       Development
 
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'dist/index.js'
+
 branding:
   icon: layout
   color: gray-dark
