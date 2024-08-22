@@ -134,3 +134,7 @@ src/.DS_Store
 .idea/revel-webapp-deployment.iml
 .idea/vcs.xml
 .DS_Store
+target.webapp
+test.jpg
+test.zip
+/.idea
