@@ -129,7 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 package-lock.json
-src/.DS_Store
+dist/.DS_Store
 .idea/modules.xml
 .idea/revel-webapp-deployment.iml
 .idea/vcs.xml
