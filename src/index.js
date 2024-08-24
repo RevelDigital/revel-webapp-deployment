@@ -36,11 +36,13 @@ async function run() {
         }else{
             throw Error('No name provided')
         }
+        console.log(name, 'name')
+        console.log(fs.readdirSync('./'))
         axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then((groups)=>{
-
+            console.log(groups)
             const output = fs.createWriteStream(core.getInput('name')+'.webapp');
             const archive = archiver('zip');
-
+            console.log(fs.readdirSync('./'))
             output.on('close',  ()=> {
                 let version;
                 console.log(archive.pointer() + ' total bytes');
@@ -61,7 +63,7 @@ async function run() {
                     version = ''
                 }
 
-                console.log(version)
+                console.log(version, 'version')
                 form.append('file', fs.createReadStream(name+'.webapp'));
                 form.append('name', name+'.webapp')
                 if(core.getInput('group-name')){
@@ -74,11 +76,15 @@ async function run() {
                         }
                     }
                     form.append('group_id', tmp)
+                    console.log(tmp, 'group_id')
                 }
                 else{
                     form.append('group_id', groups.data[0].id)
+                    console.log(groups.data[0].id, 'group_id')
                 }
+
                 form.append('tags', core.getInput('tags')+`${version}\nenv=${core.getInput('environment')}`)
+                console.log(core.getInput('tags'), 'tags')
                 form.append('is_shared', 'false')
 
                 const request_config = {
@@ -91,7 +97,8 @@ async function run() {
                 axios.post(`https://api.reveldigital.com/media?api_key=${core.getInput('api-key')}`, form, request_config).then(val=>{
                     console.log(val.status)
                 }).catch(err=>{
-                    console.log('failed to upload')
+
+                    console.log('failed to upload', err)
                 });
 
             });
