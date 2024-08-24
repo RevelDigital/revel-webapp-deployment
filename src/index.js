@@ -22,7 +22,22 @@ process.env['version'] = 'my-value';
 // most @actions toolkit packages have async methods
 async function run() {
     try {
+        let name
+        if(core.getInput('name')){
+            name = core.getInput('name')
+        }
+        else if(fs.existsSync('package.json')){
+            try{
+                const tmp = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+                name = tmp.name;
+            }catch (e) {
+                throw Error('No name provided')
+            }
+        }else{
+            throw Error('No name provided')
+        }
         axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then((groups)=>{
+
             const output = fs.createWriteStream(core.getInput('name')+'.webapp');
             const archive = archiver('zip');
 
@@ -45,9 +60,10 @@ async function run() {
                 }else{
                     version = ''
                 }
+
                 console.log(version)
-                form.append('file', fs.createReadStream(core.getInput('name')+'.webapp'));
-                form.append('name', core.getInput('name')+'.webapp')
+                form.append('file', fs.createReadStream(name+'.webapp'));
+                form.append('name', name+'.webapp')
                 if(core.getInput('group-name')){
                     let tmp = groups.data[0].id
                     for(const val of groups.data){
@@ -83,9 +99,23 @@ async function run() {
             archive.on('error', function(err){
                 throw err;
             });
-
+            let dl;
+            if(core.getInput('distribution-location')){
+                dl = core.getInput('distribution-location')
+            }
+            else if(fs.existsSync('package.json')){
+                try{
+                    const tmp = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+                    dl = `dist/${tmp.name}`;
+                }catch (e) {
+                    console.log(e)
+                    throw Error('No location specified')
+                }
+            }else{
+                throw Error('No location specified')
+            }
             archive.pipe(output);
-            archive.directory(core.getInput('distribution-location'), false);
+            archive.directory(dl, false);
             archive.finalize();
         })
 
