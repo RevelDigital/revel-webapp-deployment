@@ -37,12 +37,12 @@ async function run() {
             throw Error('No name provided')
         }
         console.log(name, 'name')
-        console.log(fs.readdirSync('./'))
-        axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then((groups)=>{
-            console.log(groups)
+        console.log(fs.readdirSync('./dist'))
+        axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then(async (groups)=>{
+            console.log(groups.data)
             const output = fs.createWriteStream(core.getInput('name')+'.webapp');
             const archive = archiver('zip');
-            console.log(fs.readdirSync('./'))
+
             output.on('close',  ()=> {
                 let version;
                 console.log(archive.pointer() + ' total bytes');
@@ -123,7 +123,8 @@ async function run() {
             }
             archive.pipe(output);
             archive.directory(dl, false);
-            archive.finalize();
+            await archive.finalize();
+            console.log(fs.readdirSync('./'))
         })
 
 
