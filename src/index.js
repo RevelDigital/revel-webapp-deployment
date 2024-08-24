@@ -20,6 +20,7 @@ const axios = require('axios');
 // }
 // most @actions toolkit packages have async methods
 async function run() {
+    console.log(core.getInput('api-key'), 'api-key')
     try {
         let name
         if(core.getInput('name')){
