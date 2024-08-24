@@ -39,11 +39,11 @@ async function run() {
         console.log(name, 'name')
         console.log(fs.readdirSync('./dist'))
         axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then(async (groups)=>{
-            console.log(groups.data)
-            const output = fs.createWriteStream(core.getInput('name')+'.webapp');
+            const output = fs.createWriteStream(name+'.webapp');
             const archive = archiver('zip');
 
             output.on('close',  ()=> {
+                console.log(fs.readdirSync('./'))
                 let version;
                 console.log(archive.pointer() + ' total bytes');
                 console.log('archiver has been finalized and the output file descriptor has closed.');
@@ -124,7 +124,7 @@ async function run() {
             archive.pipe(output);
             archive.directory(dl, false);
             await archive.finalize();
-            console.log(fs.readdirSync('./'))
+
         })
 
 
