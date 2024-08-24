@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Deploy a webapp to Revel Digital",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +19,9 @@
     "archiver": "^7.0.1",
     "axios": "^1.7.4",
     "form-data": "^4.0.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   }
 }
