@@ -24,7 +24,6 @@ const context = github.context;
 // }
 // most @actions toolkit packages have async methods
 async function run() {
-    console.log(core.getInput('api-key'), 'api-key')
     try {
         let name
         if(core.getInput('name')){
@@ -40,14 +39,11 @@ async function run() {
         }else{
             throw Error('No name provided')
         }
-        console.log(name, 'name')
-        console.log(fs.readdirSync('./dist'))
         axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then(async (groups)=>{
             const output = fs.createWriteStream(name+'.webapp');
             const archive = archiver('zip');
 
             output.on('close',  ()=> {
-                console.log(fs.readdirSync('./'))
                 let version;
                 console.log(archive.pointer() + ' total bytes');
                 console.log('archiver has been finalized and the output file descriptor has closed.');
@@ -75,21 +71,17 @@ async function run() {
                     let tmp = groups.data[0].id
                     for(const val of groups.data){
                         if(val.name.search(core.getInput('group-name'))>-1){
-                            console.log(val.name, 'match')
                             tmp = val.id
                             break;
                         }
                     }
                     form.append('group_id', tmp)
-                    console.log(tmp, 'group_id')
                 }
                 else{
                     form.append('group_id', groups.data[0].id)
-                    console.log(groups.data[0].id, 'group_id')
                 }
 
                 form.append('tags', core.getInput('tags')+`${version}\nenv=${core.getInput('environment')}`)
-                console.log(core.getInput('tags'), 'tags')
                 form.append('is_shared', 'false')
 
                 const request_config = {
@@ -102,7 +94,6 @@ async function run() {
                 axios.post(`https://api.reveldigital.com/media?api_key=${core.getInput('api-key')}`, form, request_config).then(val=>{
                     console.log(val.status)
                 }).catch(err=>{
-
                     console.log('failed to upload', err)
                 });
 
