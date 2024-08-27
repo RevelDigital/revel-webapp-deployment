@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "outDir": "./",
+    "baseUrl": "tsconfig",
+    "types": [],
+    "experimentalDecorators": true
+  },
+  "files": [
+    "./index.ts"
+  ],
+  "include": ["**.ts"],
+  "exclude": ["**/*.spec.ts"]
+}
+

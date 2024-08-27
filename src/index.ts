@@ -1,23 +1,27 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const fs = require('fs');
-const archiver = require('archiver');
-const context = github.context;
-const FormData = require('form-data');
-const axios = require('axios');
 
-// core.getInput = (val)=>{
-//     const test = {
-//         version: '',
-//         name: 'test',
-//         "group-name": "",
-//         "environment":"Production",
-//         "api-key":"",
-//         tags: "test tags",
-//         "distribution-location": "dist/ng-test-client-sdk"
-//     }
-//     return test[val]
-// }
+
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import axios from "axios";
+import * as fs from "fs";
+import * as FormData from "form-data";
+import * as archiver from 'archiver'
+
+const context = github.context;
+
+// @ts-ignore
+core.getInput = (val)=>{
+    const test = {
+        version: '',
+        name: 'test',
+        "group-name": "",
+        "environment":"Production",
+        "api-key":"",
+        tags: "test tags",
+        "distribution-location": "test.jpg"
+    }
+    return test[val]
+}
 // most @actions toolkit packages have async methods
 async function run() {
     console.log(core.getInput('api-key'), 'api-key')
@@ -64,6 +68,7 @@ async function run() {
                 }
 
                 console.log(version, 'version')
+                // @ts-ignore
                 form.append('file', fs.createReadStream(name+'.webapp'));
                 form.append('name', name+'.webapp')
                 if(core.getInput('group-name')){
