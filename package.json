@@ -1,6 +1,6 @@
 {
 	"name": "reveldigital-webapp-github-action",
-	"version": "1.0.10",
+	"version": "1.0.12",
 	"description": "Deploy a webapp to Revel Digital",
 	"main": "index.js",
 	"private": true,
