@@ -42,6 +42,17 @@ try {
 		} else {
 			throw Error("No name provided");
 		}
+
+		if (version === "" && fs.existsSync("package.json")) {
+			try {
+				const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+				version = tmp.version;
+			} catch (e) {
+				console.log(e);
+			}
+		}
+		console.log(version, "version");
+
 		let groups = await axios.get(`https://api.reveldigital.com/media/groups?api_key=${apiKey}&tree=false`);
 		if (groups.status !== 200) {
 			throw Error("Failed to get groups");
@@ -53,23 +64,8 @@ try {
 			console.log(archive.pointer() + " total bytes");
 			console.log("archiver has been finalized and the output file descriptor has closed.");
 
-			const form = new FormData();
-			if (version !== "") {
-				version = `\nversion=${version}`;
-			} else if (fs.existsSync("package.json")) {
-				version = "";
-				try {
-					const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
-					version = `\nversion=${tmp.version}`;
-				} catch (e) {
-					console.log(e);
-				}
-			} else {
-				version = "";
-			}
-
-			console.log(version, "version");
 			// @ts-ignore
+			const form = new FormData();
 			form.append("file", fs.createReadStream(name + ".webapp"));
 			form.append("name", name + ".webapp");
 			if (groupName !== "") {
@@ -85,7 +81,17 @@ try {
 				form.append("group_id", groups.data[0].id);
 			}
 
-			form.append("tags", tags + `${version}\nenv=${environment}`);
+			let formTags = [];
+			if (tags !== "") {
+				formTags = tags.split(",");
+			}
+			if (version !== "") {
+				formTags.push(`version=${version}`);
+			}
+			if (environment !== "") {
+				formTags.push(`env=${environment}`);
+			}
+			form.append("tags", formTags.join("\n"));
 			form.append("is_shared", "false");
 
 			const request_config = {
@@ -108,6 +114,7 @@ try {
 		archive.on("error", function (err) {
 			throw err;
 		});
+
 		let dl: string;
 		if (distributionLocation !== "") {
 			dl = distributionLocation;
@@ -117,11 +124,12 @@ try {
 				dl = `dist/${tmp.name}`;
 			} catch (e) {
 				console.log(e);
-				throw Error("No location specified");
+				throw Error("No distribution location specified");
 			}
 		} else {
-			throw Error("No location specified");
+			throw Error("No distribution location specified");
 		}
+		
 		archive.pipe(output);
 		archive.directory(dl, false);
 		await archive.finalize();
