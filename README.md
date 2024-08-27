@@ -47,10 +47,10 @@ jobs:
 
 ## Inputs
 
+- `api-key`: **Required** - Revel Digital API key. It's suggested to use Github secrets to store the API key. [See doc here](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
 - `name`: **Optional** - Name for the webapp. If not supplied will automatically be pulled from the name field in package.json if available.
 - `group-name`: **Optional** - Group name as a regex pattern.
 - `version`: **Optional** - Version of the webapp. Defaults to version from `package.json` if available.
-- `api-key`: **Required** - Revel Digital API key. It's suggested to use Github secrets to store the API key. [See doc here](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
 - `tags`: **Optional** - Extra tags for smart scheduling.
 - `distribution-location`: **Optional** - Distribution folder with assets to wrap into a webapp. If not supplied will automatically be pulled from the package.json if available.
 - `environment`: **Optional** - Deployment environment. Default is `Production`. Options: `Production`, `Development`.
