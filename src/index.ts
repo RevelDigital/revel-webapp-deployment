@@ -10,18 +10,18 @@ import * as archiver from 'archiver'
 const context = github.context;
 
 // @ts-ignore
-core.getInput = (val)=>{
-    const test = {
-        version: '',
-        name: 'test',
-        "group-name": "",
-        "environment":"Production",
-        "api-key":"",
-        tags: "test tags",
-        "distribution-location": "test.jpg"
-    }
-    return test[val]
-}
+// core.getInput = (val)=>{
+//     const test = {
+//         version: '',
+//         name: 'test',
+//         "group-name": "",
+//         "environment":"Production",
+//         "api-key":"",
+//         tags: "test tags",
+//         "distribution-location": "test.jpg"
+//     }
+//     return test[val]
+// }
 // most @actions toolkit packages have async methods
 async function run() {
     console.log(core.getInput('api-key'), 'api-key')
