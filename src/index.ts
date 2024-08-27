@@ -1,13 +1,9 @@
-
-
-import * as core from '@actions/core';
-import * as github from '@actions/github';
+import { getInput, setOutput, setFailed, summary } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 import axios from "axios";
 import * as fs from "fs";
 import * as FormData from "form-data";
-import * as archiver from 'archiver'
-
-const context = github.context;
+import * as archiver from "archiver";
 
 // @ts-ignore
 // core.getInput = (val)=>{
@@ -23,110 +19,113 @@ const context = github.context;
 //     return test[val]
 // }
 // most @actions toolkit packages have async methods
-async function run() {
-    try {
-        let name
-        if(core.getInput('name')){
-            name = core.getInput('name')
-        }
-        else if(fs.existsSync('package.json')){
-            try{
-                const tmp = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
-                name = tmp.name;
-            }catch (e) {
-                throw Error('No name provided')
-            }
-        }else{
-            throw Error('No name provided')
-        }
-        axios.get(`https://api.reveldigital.com/media/groups?api_key=${core.getInput('api-key')}&tree=false`).then(async (groups)=>{
-            const output = fs.createWriteStream(name+'.webapp');
-            const archive = archiver('zip');
 
-            output.on('close',  ()=> {
-                let version;
-                console.log(archive.pointer() + ' total bytes');
-                console.log('archiver has been finalized and the output file descriptor has closed.');
-                const form = new FormData();
-                if(core.getInput('version')){
-                    version = `\nversion=${core.getInput('version')}`
-                }
-                else if(fs.existsSync('package.json')){
-                    version = ''
-                    try{
-                        const tmp = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
-                        version = `\nversion=${tmp.version}`;
-                    }catch (e) {
-                        console.log(e)
-                    }
-                }else{
-                    version = ''
-                }
+try {
+	let apiKey: string = getInput("api-key", { required: true });
+	let name: string = getInput("name", { required: false });
+	let version = getInput("version", { required: false });
+	let groupName = getInput("group-name", { required: false });
+	let tags = getInput("tags", { required: false });
+	let environment = getInput("environment", { required: false });
+	let distributionLocation = getInput("distribution-location", {
+		required: false,
+	});
 
-                console.log(version, 'version')
-                // @ts-ignore
-                form.append('file', fs.createReadStream(name+'.webapp'));
-                form.append('name', name+'.webapp')
-                if(core.getInput('group-name')){
-                    let tmp = groups.data[0].id
-                    for(const val of groups.data){
-                        if(val.name.search(core.getInput('group-name'))>-1){
-                            tmp = val.id
-                            break;
-                        }
-                    }
-                    form.append('group_id', tmp)
-                }
-                else{
-                    form.append('group_id', groups.data[0].id)
-                }
+	(async () => {
+		if (name === "" && fs.existsSync("package.json")) {
+			try {
+				const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+				name = tmp.name;
+			} catch (e) {
+				throw Error("No name provided");
+			}
+		} else {
+			throw Error("No name provided");
+		}
+		let groups = await axios.get(`https://api.reveldigital.com/media/groups?api_key=${apiKey}&tree=false`);
+		if (groups.status !== 200) {
+			throw Error("Failed to get groups");
+		}
+		const output = fs.createWriteStream(name + ".webapp");
+		const archive = archiver("zip");
 
-                form.append('tags', core.getInput('tags')+`${version}\nenv=${core.getInput('environment')}`)
-                form.append('is_shared', 'false')
+		output.on("close", () => {
+			console.log(archive.pointer() + " total bytes");
+			console.log("archiver has been finalized and the output file descriptor has closed.");
 
-                const request_config = {
-                    headers: {
-                        ...form.getHeaders(),
-                        "X-Reveldigital-Apikey": core.getInput('api-key')
-                    }
-                };
+			const form = new FormData();
+			if (version !== "") {
+				version = `\nversion=${version}`;
+			} else if (fs.existsSync("package.json")) {
+				version = "";
+				try {
+					const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+					version = `\nversion=${tmp.version}`;
+				} catch (e) {
+					console.log(e);
+				}
+			} else {
+				version = "";
+			}
 
-                axios.post(`https://api.reveldigital.com/media?api_key=${core.getInput('api-key')}`, form, request_config).then(val=>{
-                    console.log(val.status)
-                }).catch(err=>{
-                    console.log('failed to upload', err)
-                });
+			console.log(version, "version");
+			// @ts-ignore
+			form.append("file", fs.createReadStream(name + ".webapp"));
+			form.append("name", name + ".webapp");
+			if (groupName !== "") {
+				let tmp = groups.data[0].id;
+				for (const val of groups.data) {
+					if (val.name.search(groupName) > -1) {
+						tmp = val.id;
+						break;
+					}
+				}
+				form.append("group_id", tmp);
+			} else {
+				form.append("group_id", groups.data[0].id);
+			}
 
-            });
+			form.append("tags", tags + `${version}\nenv=${environment}`);
+			form.append("is_shared", "false");
 
-            archive.on('error', function(err){
-                throw err;
-            });
-            let dl;
-            if(core.getInput('distribution-location')){
-                dl = core.getInput('distribution-location')
-            }
-            else if(fs.existsSync('package.json')){
-                try{
-                    const tmp = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
-                    dl = `dist/${tmp.name}`;
-                }catch (e) {
-                    console.log(e)
-                    throw Error('No location specified')
-                }
-            }else{
-                throw Error('No location specified')
-            }
-            archive.pipe(output);
-            archive.directory(dl, false);
-            await archive.finalize();
+			const request_config = {
+				headers: {
+					...form.getHeaders(),
+					"X-Reveldigital-Apikey": apiKey,
+				},
+			};
 
-        })
+			axios
+				.post(`https://api.reveldigital.com/media?api_key=${apiKey}`, form, request_config)
+				.then((val) => {
+					console.log(val.status);
+				})
+				.catch((err) => {
+					console.log("failed to upload", err);
+				});
+		});
 
-
-    } catch (error) {
-        core.setFailed(error.message);
-    }
+		archive.on("error", function (err) {
+			throw err;
+		});
+		let dl: string;
+		if (distributionLocation !== "") {
+			dl = distributionLocation;
+		} else if (fs.existsSync("package.json")) {
+			try {
+				const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+				dl = `dist/${tmp.name}`;
+			} catch (e) {
+				console.log(e);
+				throw Error("No location specified");
+			}
+		} else {
+			throw Error("No location specified");
+		}
+		archive.pipe(output);
+		archive.directory(dl, false);
+		await archive.finalize();
+	})();
+} catch (error) {
+	setFailed(error.message);
 }
-
-run()

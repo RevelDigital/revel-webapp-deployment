@@ -12,7 +12,6 @@ This GitHub Action facilitates the deployment of a web app to Revel Digital's CM
 name: Deploy Webapp
 on: push
 
-
 jobs:
   release-webapp:
     runs-on: ${{ matrix.os }}
@@ -44,9 +43,6 @@ jobs:
         with:
           api-key: ${{ secrets.Revel_API_Key }}
           environment: ${{ github.head_ref || github.ref_name }}
-
-
-
 ```
 
 ## Inputs
@@ -56,7 +52,7 @@ jobs:
 - `version`: **Optional** - Version of the webapp. Defaults to version from `package.json` if available.
 - `api-key`: **Required** - Revel Digital API key. It's suggested to use Github secrets to store the API key. [See doc here](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
 - `tags`: **Optional** - Extra tags for smart scheduling.
-- `distribution-location`: **Required** - Distribution folder with assets to wrap into a webapp.  Will automatically be pulled from the package.json if available.
+- `distribution-location`: **Required** - Distribution folder with assets to wrap into a webapp. Will automatically be pulled from the package.json if available.
 - `environment`: **Required** - Deployment environment. Default is `Production`. Options: `Production`, `Development`.
 
 ## License

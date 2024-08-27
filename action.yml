@@ -1,37 +1,36 @@
-name: reveldigital-webapp-github-action
-description:  Deploy a webapp to Revel Digital's CMS
+name: "Revel Digital Webapp Deploy Action"
+description: "Automate your Webapp deployment to the Revel Digital CMS"
 inputs:
   name:
-    description: 'Name for the webapp'
+    description: "Name for the webapp"
     required: true
   group-name:
-    description: 'Group name as a regex pattern'
+    description: "Group name as a regex pattern"
     required: false
   version:
-    description: 'Version of the webapp. Default version will be taken from package.json if it exists'
+    description: "Version of the webapp. Default version will be taken from package.json if it exists"
     required: false
   api-key:
-    description: 'Revel Digital API key'
+    description: "Revel Digital API key"
     required: true
   tags:
-    description: 'Extra tags for smart scheduling'
+    description: "Extra tags for smart scheduling"
     required: false
   distribution-location:
-    description: 'Distribution folder with assets to wrap into a webapp'
+    description: "Distribution folder with assets to wrap into a webapp"
     required: true
-    default: dist
+    default: "dist"
   environment:
-    description: 'Set the deployment environment. Default is Production.'
+    description: "Set the deployment environment. Default is Production."
     required: true
     default: |
       Production
       Development
 
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
-
+  using: "node20"
+  main: "dist/index.js"
 
 branding:
-  icon: layout
-  color: gray-dark
+  icon: "upload-cloud"
+  color: "blue"

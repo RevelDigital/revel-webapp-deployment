@@ -10,28 +10,28 @@ Dissemination of this information or reproduction of this material
 is strictly forbidden unless prior written permission is obtained
 from Revel Digital Worldwide Operations.
 ***************************************************************************** */
-var path = require('path');
+var path = require("path");
 
 module.exports = {
-    entry: {
-        'index': './src/index.ts'
-    },
-    mode: 'production',
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
-        ],
-    },
-    resolve: {
-        extensions: ['.ts', '.js']
-    },
-    output: {
-        path: path.resolve(__dirname, './dist'),
-        filename: '[name].js'
-    },
-    target: 'node'
+	entry: {
+		index: "./src/index.ts",
+	},
+	mode: "production",
+	module: {
+		rules: [
+			{
+				test: /\.tsx?$/,
+				use: "ts-loader",
+				exclude: /node_modules/,
+			},
+		],
+	},
+	resolve: {
+		extensions: [".ts", ".js"],
+	},
+	output: {
+		path: path.resolve(__dirname, "./dist"),
+		filename: "[name].js",
+	},
+	target: "node",
 };
