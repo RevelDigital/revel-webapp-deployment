@@ -1,10 +1,10 @@
-# RevelDigital Webapp GitHub Action
+# Revel Digital Webapp GitHub Action
 
-Deploy your web application to Revel Digital's CMS with ease.
+Deploy your web application to the Revel Digital CMS with ease.
 
 ## Usage
 
-This GitHub Action facilitates the deployment of a web app to Revel Digital's CMS.
+This GitHub Action facilitates the deployment of a web app to the Revel Digital CMS.
 
 ### Example Workflow
 
