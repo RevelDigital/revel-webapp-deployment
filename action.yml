@@ -3,7 +3,7 @@ description: "Automate your Webapp deployment to the Revel Digital CMS"
 inputs:
   name:
     description: "Name for the webapp"
-    required: true
+    required: false
   group-name:
     description: "Group name as a regex pattern"
     required: false
@@ -18,8 +18,7 @@ inputs:
     required: false
   distribution-location:
     description: "Distribution folder with assets to wrap into a webapp"
-    required: true
-    default: "dist"
+    required: false
   environment:
     description: "Set the deployment environment. Default is Production."
     required: true

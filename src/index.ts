@@ -123,11 +123,14 @@ try {
 				const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 				dl = `dist/${tmp.name}`;
 			} catch (e) {
-				console.log(e);
-				throw Error("No distribution location specified");
+				console.warn("No distribution folder specified, defaulting to '/dist'");
+				dl = "dist";
+				//throw Error("No distribution location specified, defaulting to '/dist'");
 			}
 		} else {
-			throw Error("No distribution location specified");
+			//throw Error("No distribution location specified");
+			console.warn("No distribution folder specified, defaulting to '/dist'");
+			dl = "dist";
 		}
 		
 		archive.pipe(output);
