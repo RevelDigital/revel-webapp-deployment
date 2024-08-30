@@ -51,7 +51,7 @@ jobs:
 - `name`: **Optional** - Name for the webapp. If not supplied will automatically be pulled from the name field in package.json if available.
 - `group-name`: **Optional** - Group name as a regex pattern.
 - `version`: **Optional** - Version of the webapp. Defaults to version from `package.json` if available.
-- `tags`: **Optional** - Extra tags for smart scheduling.
+- `tags`: **Optional** - Extra tags for smart scheduling (comma delimited).
 - `distribution-location`: **Optional** - Distribution folder with assets to wrap into a webapp. If not supplied will automatically be pulled from the package.json if available.
 - `environment`: **Optional** - Deployment environment. Default is `Production`. Options: `Production`, `Development`.
 
