@@ -1,4 +1,4 @@
-import { getInput, setOutput, setFailed, summary } from "@actions/core";
+import { getInput, setOutput, setFailed, summary, info, error } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import axios from "axios";
 import * as fs from "fs";
@@ -48,10 +48,10 @@ try {
 				const tmp = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 				version = tmp.version;
 			} catch (e) {
-				console.log(e);
+				error(`Failed to get version from package.json: ${e}`);
 			}
 		}
-		console.log(version, "version");
+		info(`Using webapp version: ${version}`);
 
 		let groups = await axios.get(`https://api.reveldigital.com/media/groups?api_key=${apiKey}&tree=false`);
 		if (groups.status !== 200) {
@@ -61,8 +61,7 @@ try {
 		const archive = archiver("zip");
 
 		output.on("close", () => {
-			console.log(archive.pointer() + " total bytes");
-			console.log("archiver has been finalized and the output file descriptor has closed.");
+			info(`Uploading ${name}.webapp to Revel Digital, ${archive.pointer()} total bytes`);
 
 			// @ts-ignore
 			const form = new FormData();
@@ -77,8 +76,10 @@ try {
 					}
 				}
 				form.append("group_id", tmp);
+				info(`Uploading to group: ${tmp}`);
 			} else {
 				form.append("group_id", groups.data[0].id);
+				info(`Uploading to group: ${groups.data[0].id}`);
 			}
 
 			let formTags = [];
@@ -104,14 +105,20 @@ try {
 			axios
 				.post(`https://api.reveldigital.com/media?api_key=${apiKey}`, form, request_config)
 				.then((val) => {
-					console.log(val.status);
+					info(`Upload of ${name}.webapp to Revel Digital successful: ${val.status}`);
+
+					setOutput("published", {
+						version: version,
+						media: val.data,
+					});
 				})
 				.catch((err) => {
-					console.log("failed to upload", err);
+					error(`Failed to upload ${name}.webapp to Revel Digital: ${err}`);
 				});
 		});
 
 		archive.on("error", function (err) {
+			error(`Failed to create archive: ${err}`);
 			throw err;
 		});
 
@@ -132,7 +139,8 @@ try {
 			console.warn("No distribution folder specified, defaulting to '/dist'");
 			dl = "dist";
 		}
-		
+		info(`Using distribution location: ${dl}`);
+
 		archive.pipe(output);
 		archive.directory(dl, false);
 		await archive.finalize();
